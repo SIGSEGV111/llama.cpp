@@ -1,6 +1,5 @@
 STD_MAKE_LIB_DIR ?= submodules/std-make-lib
 
-STD_PROFILE := package-only
 CI_ENABLE := 1
 
 RPM_PACKAGE_IDS := MAIN
@@ -25,7 +24,11 @@ CUDA_ARCHITECTURES ?= 86-real
 
 RPM_LIBDIR ?= $(shell rpm --eval '%{_lib}' 2>/dev/null || printf 'lib64')
 
+CC = gcc
+CXX = g++
 CMAKE_ARGS := \
+	-DCMAKE_C_COMPILER="$(CC)" \
+	-DCMAKE_CXX_COMPILER="$(CXX)" \
 	-DGGML_CUDA=ON \
 	-DGGML_NATIVE=ON \
 	-DCMAKE_CUDA_ARCHITECTURES="$(CUDA_ARCHITECTURES)" \
