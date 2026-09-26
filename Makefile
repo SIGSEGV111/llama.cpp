@@ -10,7 +10,7 @@ RPM_MAIN_EASY_RPM_FLAGS := --prebuilt
 
 # Makefile and Makefile.common are added by std-make-lib automatically.
 # Do not recursively include the complete std-make-lib submodule in Source0.
-RPM_MAIN_SOURCE_FILES := $(filter-out Makefile $(STD_MAKE_LIB_DIR),$(shell git ls-files))
+RPM_MAIN_SOURCE_FILES := .
 
 include $(STD_MAKE_LIB_DIR)/Makefile.common
 
