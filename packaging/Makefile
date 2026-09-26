@@ -27,7 +27,7 @@ RPM_LIBDIR ?= $(shell rpm --eval '%{_lib}' 2>/dev/null || printf 'lib64')
 
 CMAKE_ARGS := \
 	-DGGML_CUDA=ON \
-	-DGGML_NATIVE=OFF \
+	-DGGML_NATIVE=ON \
 	-DCMAKE_CUDA_ARCHITECTURES="$(CUDA_ARCHITECTURES)" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_INSTALL_PREFIX=/usr \
