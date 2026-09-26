@@ -1,0 +1,72 @@
+SHELL := /bin/bash
+
+PACKAGE_NAME := llama-cpp-cuda
+SPEC := packaging/llama-cpp-cuda.spec
+
+ARCH ?= x86_64
+JOBS ?= $(shell nproc)
+
+CMAKE ?= cmake
+EASY_RPM ?= easy-rpm.sh
+
+BUILD_DIR ?= build_dir
+GEN_DIR ?= gen
+RPM_OUT_DIR ?= $(GEN_DIR)/rpm
+CI_DIR ?= $(GEN_DIR)/jenkins
+CI_RPM_DIR ?= $(CI_DIR)/rpm
+
+CUDA_ARCHITECTURES ?= 86
+RPM_LIBDIR ?= $(shell rpm --eval '%{_lib}')
+
+MAKEFILE_PATH := $(lastword $(MAKEFILE_LIST))
+GIT_SOURCE_FILES := $(shell git ls-files)
+RPM_SOURCE_FILES := $(sort $(GIT_SOURCE_FILES) $(MAKEFILE_PATH) $(SPEC))
+
+CMAKE_ARGS := \
+	-DGGML_CUDA=ON \
+	-DGGML_NATIVE=OFF \
+	-DCMAKE_CUDA_ARCHITECTURES="$(CUDA_ARCHITECTURES)" \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_INSTALL_PREFIX=/usr \
+	-DCMAKE_INSTALL_LIBDIR="$(RPM_LIBDIR)" \
+	-DBUILD_SHARED_LIBS=ON \
+	-DLLAMA_BUILD_COMMON=ON \
+	-DLLAMA_BUILD_TOOLS=ON \
+	-DLLAMA_BUILD_SERVER=ON \
+	-DLLAMA_BUILD_APP=ON \
+	-DLLAMA_TOOLS_INSTALL=ON \
+	-DLLAMA_BUILD_TESTS=OFF \
+	-DLLAMA_BUILD_EXAMPLES=OFF \
+	-DLLAMA_BUILD_UI=OFF \
+	-DLLAMA_USE_PREBUILT_UI=OFF
+
+.PHONY: all configure build rpm ci clean
+
+all: build
+
+configure:
+	$(CMAKE) -S . -B "$(BUILD_DIR)" $(CMAKE_ARGS)
+
+build: configure
+	$(CMAKE) --build "$(BUILD_DIR)" --parallel "$(JOBS)"
+
+rpm: build
+	rm -rf -- "$(RPM_OUT_DIR)"
+	mkdir -p -- "$(RPM_OUT_DIR)"
+	$(EASY_RPM) \
+		--prebuilt \
+		--name "$(PACKAGE_NAME)" \
+		--spec "$(SPEC)" \
+		--outdir "$(RPM_OUT_DIR)" \
+		--plain \
+		--arch "$(ARCH)" \
+		-- $(RPM_SOURCE_FILES)
+
+ci: rpm
+	rm -rf -- "$(CI_DIR)"
+	mkdir -p -- "$(CI_RPM_DIR)"
+	cp -v -- "$(RPM_OUT_DIR)"/*.rpm "$(CI_RPM_DIR)/"
+	@printf 'RPM artifacts: %s\n' "$(abspath $(CI_RPM_DIR))"
+
+clean:
+	rm -rf -- "$(BUILD_DIR)" "$(GEN_DIR)"
