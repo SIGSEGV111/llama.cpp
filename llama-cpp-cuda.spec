@@ -22,7 +22,7 @@ The CUDA device code is compiled for NVIDIA Compute Capability 8.6
 (RTX 3000 / Ampere).
 
 %prep
-%autosetup -q
+%autosetup
 
 %build
 cmake \
