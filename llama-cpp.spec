@@ -43,7 +43,8 @@ cmake \
 	-DLLAMA_BUILD_TESTS=OFF \
 	-DLLAMA_BUILD_EXAMPLES=OFF \
 	-DLLAMA_BUILD_UI=OFF \
-	-DLLAMA_USE_PREBUILT_UI=OFF
+	-DLLAMA_USE_PREBUILT_UI=OFF \
+    -DGGML_VULKAN=ON
 
 cmake --build build_dir --parallel %{?_smp_build_ncpus}
 
@@ -51,7 +52,8 @@ cmake --build build_dir --parallel %{?_smp_build_ncpus}
 rm -rf -- "%{buildroot}"
 DESTDIR="%{buildroot}" cmake --install build_dir
 manifest="%{_builddir}/%{name}.files"
-find "%{buildroot}" \( -type f -or -type l \) > "${manifest}"
+cd "%{buildroot}"
+find \( -type f -or -type l \) > "${manifest}"
 test -s "${manifest}"
 
 %check
