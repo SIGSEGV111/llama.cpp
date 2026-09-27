@@ -3,8 +3,8 @@ STD_MAKE_LIB_DIR ?= submodules/std-make-lib
 CI_ENABLE := 1
 
 RPM_PACKAGE_IDS := MAIN
-RPM_MAIN_NAME := llama-cpp-cuda
-RPM_MAIN_SPEC := llama-cpp-cuda.spec
+RPM_MAIN_NAME := llama-cpp
+RPM_MAIN_SPEC := llama-cpp.spec
 RPM_MAIN_BUILD_DEPS := build
 RPM_MAIN_EASY_RPM_FLAGS := --prebuilt
 

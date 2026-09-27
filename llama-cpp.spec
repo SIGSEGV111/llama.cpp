@@ -1,6 +1,6 @@
 %global debug_package %{nil}
 
-Name:           llama-cpp-cuda
+Name:           llama-cpp
 Summary:        llama.cpp built with NVIDIA CUDA support for RTX 3000 GPUs
 Group:          Productivity/Scientific/Other
 Distribution:   openSUSE
@@ -56,7 +56,7 @@ manifest="%{_builddir}/%{name}.files"
 
 find "%{buildroot}" \
 	\( -type f -o -type l \) \
-	-printf '/%P\n' \
+	-printf '/\%P\n' \
 	| LC_ALL=C sort \
 	> "${manifest}"
 
