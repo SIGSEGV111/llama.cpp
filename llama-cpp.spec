@@ -53,7 +53,7 @@ rm -rf -- "%{buildroot}"
 DESTDIR="%{buildroot}" cmake --install build_dir
 manifest="%{_builddir}/%{name}.files"
 cd "%{buildroot}"
-find \( -type f -or -type l \) > "${manifest}"
+find \( -type f -or -type l \) | cut -c 2- > "${manifest}"
 test -s "${manifest}"
 
 %check
