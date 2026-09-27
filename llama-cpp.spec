@@ -49,17 +49,9 @@ cmake --build build_dir --parallel %{?_smp_build_ncpus}
 
 %install
 rm -rf -- "%{buildroot}"
-
 DESTDIR="%{buildroot}" cmake --install build_dir
-
 manifest="%{_builddir}/%{name}.files"
-
-find "%{buildroot}" \
-	\( -type f -o -type l \) \
-	-printf '/\%P\n' \
-	| LC_ALL=C sort \
-	> "${manifest}"
-
+find "%{buildroot}" \( -type f -or -type l \) > "${manifest}"
 test -s "${manifest}"
 
 %check
