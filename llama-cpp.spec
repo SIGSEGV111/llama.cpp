@@ -15,6 +15,7 @@ BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  libopenssl-devel
+BuildRequires:  libopenblas_openmp-devel
 
 %description
 llama.cpp and its command-line tools, built with the CUDA backend enabled.
@@ -25,28 +26,7 @@ The CUDA device code is compiled for NVIDIA Compute Capability 8.6
 %autosetup
 
 %build
-cmake \
-	-S . \
-	-B build_dir \
-	-DGGML_CUDA=ON \
-	-DGGML_NATIVE=OFF \
-	-DCMAKE_CUDA_ARCHITECTURES=86 \
-	-DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_INSTALL_PREFIX=%{_prefix} \
-	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
-	-DBUILD_SHARED_LIBS=ON \
-	-DLLAMA_BUILD_COMMON=ON \
-	-DLLAMA_BUILD_TOOLS=ON \
-	-DLLAMA_BUILD_SERVER=ON \
-	-DLLAMA_BUILD_APP=ON \
-	-DLLAMA_TOOLS_INSTALL=ON \
-	-DLLAMA_BUILD_TESTS=OFF \
-	-DLLAMA_BUILD_EXAMPLES=OFF \
-	-DLLAMA_BUILD_UI=OFF \
-	-DLLAMA_USE_PREBUILT_UI=OFF \
-    -DGGML_VULKAN=ON
-
-cmake --build build_dir --parallel %{?_smp_build_ncpus}
+make build
 
 %install
 rm -rf -- "%{buildroot}"
