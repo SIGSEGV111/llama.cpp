@@ -18,21 +18,20 @@ CMAKE ?= cmake
 BUILD_DIR ?= build_dir
 JOBS ?= $(shell nproc)
 
-# RTX 3090 = Compute Capability 8.6.
-# "-real" emits native device code only and avoids PTX for other/future GPUs.
-CUDA_ARCHITECTURES ?= 86-real
-
 RPM_LIBDIR ?= $(shell rpm --eval '%{_lib}' 2>/dev/null || printf 'lib64')
+ONEAPI_ENV := source /opt/intel/oneapi/setvars.sh --include-intel-llvm >/dev/null 2>&1
 
-CC = gcc
-CXX = g++
 CMAKE_ARGS := \
-	-DCMAKE_C_COMPILER="$(CC)" \
-	-DCMAKE_CXX_COMPILER="$(CXX)" \
+	-DCMAKE_C_COMPILER=icx \
+	-DCMAKE_CXX_COMPILER=icpx \
+	-DGGML_SYCL=ON \
 	-DGGML_CUDA=ON \
-	-DGGML_NATIVE=ON \
 	-DGGML_VULKAN=ON \
-	-DCMAKE_CUDA_ARCHITECTURES="$(CUDA_ARCHITECTURES)" \
+	-DGGML_NATIVE=ON \
+	-DGGML_SYCL_F16=ON \
+	-DGGML_SYCL_TARGET=INTEL \
+	-DGGML_SYCL_DEVICE_ARCH=bmg_g21 \
+	-DCMAKE_CUDA_ARCHITECTURES=86-real \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_INSTALL_LIBDIR="$(RPM_LIBDIR)" \
@@ -48,7 +47,7 @@ CMAKE_ARGS := \
 	-DLLAMA_USE_PREBUILT_UI=OFF \
 	-DGGML_OPENMP=ON \
 	-DGGML_BLAS=ON \
-	-DGGML_BLAS_VENDOR=OpenBLAS \
+	-DGGML_BLAS_VENDOR=Intel10_64lp \
 	-DGGML_CCACHE=OFF
 
 .PHONY: all configure build clean
@@ -56,10 +55,10 @@ CMAKE_ARGS := \
 all: build
 
 configure:
-	$(CMAKE) -S . -B "$(BUILD_DIR)" $(CMAKE_ARGS)
+	$(ONEAPI_ENV) && $(CMAKE) -S . -B "$(BUILD_DIR)" $(CMAKE_ARGS)
 
 build: configure
-	$(CMAKE) --build "$(BUILD_DIR)" --parallel "$(JOBS)"
+	$(ONEAPI_ENV) && $(CMAKE) --build "$(BUILD_DIR)" --parallel "$(JOBS)"
 
 clean:
 	rm -rf -- "$(BUILD_DIR)" "$(GEN_DIR)"
