@@ -6,19 +6,19 @@ RPM_PACKAGE_IDS := CPU NVIDIA INTEL
 
 RPM_CPU_NAME := llama-cpp-cpu
 RPM_CPU_SPEC := llama-cpp-cpu.spec
-RPM_CPU_BUILD_DEPS := build-cpu
+RPM_CPU_BUILD_DEPS := build
 RPM_CPU_EASY_RPM_FLAGS := --prebuilt
 RPM_CPU_SOURCE_FILES := .
 
 RPM_NVIDIA_NAME := llama-cpp-nvidia
 RPM_NVIDIA_SPEC := llama-cpp-nvidia.spec
-RPM_NVIDIA_BUILD_DEPS := build-nvidia
+RPM_NVIDIA_BUILD_DEPS := build
 RPM_NVIDIA_EASY_RPM_FLAGS := --prebuilt
 RPM_NVIDIA_SOURCE_FILES := .
 
 RPM_INTEL_NAME := llama-cpp-intel
 RPM_INTEL_SPEC := llama-cpp-intel.spec
-RPM_INTEL_BUILD_DEPS := build-intel
+RPM_INTEL_BUILD_DEPS := build
 RPM_INTEL_EASY_RPM_FLAGS := --prebuilt
 RPM_INTEL_SOURCE_FILES := .
 
