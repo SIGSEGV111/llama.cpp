@@ -12,10 +12,17 @@ Conflicts:      llama-cpp-cpu
 Conflicts:      llama-cpp-nvidia
 
 BuildRequires:  cmake
+
+%if 0%{?easy_rpm_prebuilt} == 0
 BuildRequires:  make
 BuildRequires:  libopenssl-devel
-BuildRequires:  intel-oneapi-toolkit
+BuildRequires:  intel-oneapi-compiler-dpcpp-cpp
 BuildRequires:  intel-opencl
+BuildRequires:  intel-oneapi-mkl-devel
+BuildRequires:  intel-oneapi-mkl-sycl-devel
+BuildRequires:  intel-oneapi-dnnl-devel
+BuildRequires:  level-zero-devel
+%endif
 
 %description
 llama.cpp and its command-line tools with only the Intel SYCL compute backend,
@@ -26,7 +33,6 @@ backends are disabled.
 %autosetup
 
 %build
-source /opt/intel/oneapi/setvars.sh --include-intel-llvm
 make build-intel
 
 %install
