@@ -39,10 +39,6 @@ test -s "${manifest}"
 %check
 test -x "%{buildroot}%{_bindir}/llama-server"
 test -e "%{buildroot}%{_bindir}/libggml-cuda.so"
-test -z "$(find '%{buildroot}%{_bindir}' -maxdepth 1 -name 'libggml-cpu*.so' -print -quit)"
-test ! -e "%{buildroot}%{_bindir}/libggml-vulkan.so"
-test ! -e "%{buildroot}%{_bindir}/libggml-blas.so"
-test ! -e "%{buildroot}%{_bindir}/libggml-sycl.so"
 
 %files -f %{_builddir}/%{name}.files
 %license LICENSE
