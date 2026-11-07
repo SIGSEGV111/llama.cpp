@@ -45,7 +45,7 @@ RPM_LIBDIR ?= $(shell rpm --eval '%{_lib}' 2>/dev/null || printf 'lib64')
 ONEAPI_ENV := \
 	source /opt/intel/oneapi/compiler/$(ONEAPI_COMPILER_VERSION)/env/vars.sh >/dev/null 2>&1 && \
 	source /opt/intel/oneapi/mkl/$(ONEAPI_MKL_VERSION)/env/vars.sh >/dev/null 2>&1 && \
-	source /opt/intel/oneapi/dnnl/$(ONEAPI_DNNL_VERSION)/env/vars.sh >/dev/null 2>&1 \
+	source /opt/intel/oneapi/dnnl/$(ONEAPI_DNNL_VERSION)/env/vars.sh >/dev/null 2>&1 && \
 	source /opt/intel/oneapi/tbb/$(ONEAPI_TBB_VERSION)/env/vars.sh >/dev/null 2>&1
 
 CMAKE_COMMON_ARGS := \
