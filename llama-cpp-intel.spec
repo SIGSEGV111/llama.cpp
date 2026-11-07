@@ -24,7 +24,6 @@ Requires:       libze_intel_gpu1
 BuildRequires:  make
 BuildRequires:  libopenssl-devel
 BuildRequires:  intel-oneapi-compiler-dpcpp-cpp-%{oneapi_compiler_version}
-BuildRequires:  intel-opencl
 BuildRequires:  intel-oneapi-mkl-devel-%{oneapi_mkl_version}
 BuildRequires:  intel-oneapi-mkl-sycl-devel-%{oneapi_mkl_version}
 BuildRequires:  intel-oneapi-dnnl-devel-%{oneapi_dnnl_version}
