@@ -29,7 +29,8 @@ RPM_INTEL_SOURCE_FILES := .
 RPM_INTEL_DEFINES := \
 	oneapi_compiler_version=$(ONEAPI_COMPILER_VERSION) \
 	oneapi_mkl_version=$(ONEAPI_MKL_VERSION) \
-	oneapi_dnnl_version=$(ONEAPI_DNNL_VERSION)
+	oneapi_dnnl_version=$(ONEAPI_DNNL_VERSION) \
+	oneapi_tbb_version=$(ONEAPI_TBB_VERSION)
 
 include $(STD_MAKE_LIB_DIR)/Makefile.common
 
@@ -137,7 +138,8 @@ verify-intel-toolchain:
 	rpm -q \
 		"intel-oneapi-compiler-dpcpp-cpp-$(ONEAPI_COMPILER_VERSION)" \
 		"intel-oneapi-mkl-sycl-devel-$(ONEAPI_MKL_VERSION)" \
-		"intel-oneapi-dnnl-devel-$(ONEAPI_DNNL_VERSION)"
+		"intel-oneapi-dnnl-devel-$(ONEAPI_DNNL_VERSION)" \
+		"intel-oneapi-tbb-devel-$(ONEAPI_TBB_VERSION)"
 	$(ONEAPI_ENV) && icpx --version
 
 configure-intel: verify-intel-toolchain
