@@ -2,6 +2,10 @@ STD_MAKE_LIB_DIR ?= submodules/std-make-lib
 
 CI_ENABLE := 1
 
+ONEAPI_COMPILER_VERSION ?= 2026.2
+ONEAPI_MKL_VERSION ?= 2026.2
+ONEAPI_DNNL_VERSION ?= 2026.1
+
 RPM_PACKAGE_IDS := CPU NVIDIA INTEL
 
 RPM_CPU_NAME := llama-cpp-cpu
@@ -21,6 +25,10 @@ RPM_INTEL_SPEC := llama-cpp-intel.spec
 RPM_INTEL_BUILD_DEPS := build
 RPM_INTEL_EASY_RPM_FLAGS := --prebuilt
 RPM_INTEL_SOURCE_FILES := .
+RPM_INTEL_DEFINES := \
+	oneapi_compiler_version=$(ONEAPI_COMPILER_VERSION) \
+	oneapi_mkl_version=$(ONEAPI_MKL_VERSION) \
+	oneapi_dnnl_version=$(ONEAPI_DNNL_VERSION)
 
 include $(STD_MAKE_LIB_DIR)/Makefile.common
 
@@ -33,7 +41,10 @@ NVIDIA_BUILD_DIR ?= $(BUILD_ROOT)/nvidia
 INTEL_BUILD_DIR ?= $(BUILD_ROOT)/intel
 
 RPM_LIBDIR ?= $(shell rpm --eval '%{_lib}' 2>/dev/null || printf 'lib64')
-ONEAPI_ENV := source /opt/intel/oneapi/setvars.sh --include-intel-llvm >/dev/null 2>&1
+ONEAPI_ENV := \
+	source /opt/intel/oneapi/compiler/$(ONEAPI_COMPILER_VERSION)/env/vars.sh >/dev/null 2>&1 && \
+	source /opt/intel/oneapi/mkl/$(ONEAPI_MKL_VERSION)/env/vars.sh >/dev/null 2>&1 && \
+	source /opt/intel/oneapi/dnnl/$(ONEAPI_DNNL_VERSION)/env/vars.sh >/dev/null 2>&1
 
 CMAKE_COMMON_ARGS := \
 	-DCMAKE_BUILD_TYPE=Release \
@@ -101,7 +112,7 @@ CI_RPM_ARTIFACTS := \
 .PHONY: all build \
 	configure-cpu build-cpu \
 	configure-nvidia build-nvidia \
-	configure-intel build-intel \
+	verify-intel-toolchain configure-intel build-intel \
 	clean
 
 all: build
@@ -120,7 +131,14 @@ configure-nvidia:
 build-nvidia: configure-nvidia
 	$(CMAKE) --build "$(NVIDIA_BUILD_DIR)" --parallel "$(JOBS)"
 
-configure-intel:
+verify-intel-toolchain:
+	rpm -q \
+		"intel-oneapi-compiler-dpcpp-cpp-$(ONEAPI_COMPILER_VERSION)" \
+		"intel-oneapi-mkl-sycl-devel-$(ONEAPI_MKL_VERSION)" \
+		"intel-oneapi-dnnl-devel-$(ONEAPI_DNNL_VERSION)"
+	$(ONEAPI_ENV) && icpx --version
+
+configure-intel: verify-intel-toolchain
 	$(ONEAPI_ENV) && $(CMAKE) -S . -B "$(INTEL_BUILD_DIR)" $(INTEL_CMAKE_ARGS)
 
 build-intel: configure-intel
