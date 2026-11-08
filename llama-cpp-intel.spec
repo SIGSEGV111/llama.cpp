@@ -59,6 +59,7 @@ test -e "%{buildroot}%{_bindir}/libggml-sycl.so"
 . /opt/intel/oneapi/mkl/%{oneapi_mkl_version}/env/vars.sh >/dev/null 2>&1
 . /opt/intel/oneapi/dnnl/%{oneapi_dnnl_version}/env/vars.sh >/dev/null 2>&1
 . /opt/intel/oneapi/tbb/%{oneapi_tbb_version}/env/vars.sh >/dev/null 2>&1
+export LD_LIBRARY_PATH="%{buildroot}%{_libdir}:%{buildroot}%{_bindir}:${LD_LIBRARY_PATH:-}"
 ! ldd -r "%{buildroot}%{_bindir}/libggml-sycl.so" 2>&1 | grep -E 'not found|undefined symbol'
 
 %files -f %{_builddir}/%{name}.files
